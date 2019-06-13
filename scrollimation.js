@@ -2,7 +2,13 @@ class ScrollimationWorker {
 	constructor() {
 		let instances = []
 		this.instances = instances
+	}
 
+	initRaf() {
+		if (this.initedRaf) {return}
+		this.initedRaf = true
+		instances = this.instances
+		
 		let requestAnimationFrame = ScrollimationWorker.requestAnimationFrame
 		function frame() {
 			let scrollTop = ScrollimationWorker.scrollTop
@@ -18,15 +24,37 @@ class ScrollimationWorker {
 			requestAnimationFrame(frame)
 		}
 		requestAnimationFrame(frame)
+	}
 
-		window.onscroll = ScrollimationWorker.Throttle(() => {
+	initScrollTracker(fps) {
+		if (this.initedScrollTracker) {return}
+		this.initedScrollTracker = true
+		instances = this.instances
+
+		handler = ()=> {
 			let scrollTop = ScrollimationWorker.scrollTop
 			let scrollLeft = ScrollimationWorker.scrollLeft
 			instances.forEach(instance => {
 				if (instance.mode === 'onscroll' && instance.status === 'play')
 					ScrollimationWorker.animate(scrollTop, scrollLeft, instance)
 			})
-		}, 1000 / 60)
+		}
+
+		if (fps) {
+			window.addEventListener('scroll', ScrollimationWorker.Throttle(handler, 1000 / fps))
+		} else {
+			window.addEventListener('scroll', handler)
+		}
+	}
+
+	addInstance(instance, fps) {
+		this.instances.push(instance)
+
+		if (instance.mode === 'onscroll') {
+			this.initScrollTracker(fps)
+		} else {
+			this.initRaf()
+		}
 	}
 
 	// Preparing to run user-defined function
@@ -118,6 +146,7 @@ class Scrollimation {
 		this.id = Math.random()
 			.toString(36)
 			.substr(2, 9)
+		this.fps = config.fps || 0
 		this.from = config.from || 0
 		this.to = config.to || 0
 		this.direction = config.direction || 'top'
@@ -148,7 +177,7 @@ class Scrollimation {
 		this.status = 'play'
 
 		this.step(this)
-		worker.instances.push(this)
+		worker.addInstance(this, this.fps)
 	}
 
 	/**
