@@ -31,7 +31,7 @@ class ScrollimationWorker {
 		this.initedScrollTracker = true
 		let instances = this.instances
 
-		handler = ()=> {
+		let handler = ()=> {
 			let scrollTop = ScrollimationWorker.scrollTop
 			let scrollLeft = ScrollimationWorker.scrollLeft
 			instances.forEach(instance => {
