@@ -7,7 +7,7 @@ class ScrollimationWorker {
 	initRaf() {
 		if (this.initedRaf) {return}
 		this.initedRaf = true
-		instances = this.instances
+		let instances = this.instances
 		
 		let requestAnimationFrame = ScrollimationWorker.requestAnimationFrame
 		function frame() {
@@ -29,7 +29,7 @@ class ScrollimationWorker {
 	initScrollTracker(fps) {
 		if (this.initedScrollTracker) {return}
 		this.initedScrollTracker = true
-		instances = this.instances
+		let instances = this.instances
 
 		handler = ()=> {
 			let scrollTop = ScrollimationWorker.scrollTop
